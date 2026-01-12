@@ -54,11 +54,24 @@ Edit `handoff-prompt.sh` to customise:
 - **Snooze duration** - Default 5 minutes (300 seconds)
 - **Summary length** - Default 500 tokens
 
-## Requirements
+## Requirements (WSL/Warp - Default)
 
 - Claude Code CLI
 - WSL with Warp terminal (uses PowerShell for dialogs)
 - Python 3 (for transcript parsing)
+
+## Platform Variants
+
+The default version is for WSL + Warp. Experimental versions for other platforms:
+
+| Platform | Dialog | New Tab | Status |
+|----------|--------|---------|--------|
+| **WSL/Warp** (default) | PowerShell/WinForms | Warp keystrokes | Tested |
+| [Linux (Zenity)](platforms/linux-zenity/) | Zenity GTK | gnome-terminal | Experimental |
+| [macOS](platforms/macos/) | osascript | iTerm2/Terminal | Experimental |
+| [Generic](platforms/generic/) | Text prompt | Manual | Experimental |
+
+To use an experimental version, copy the `handoff-prompt.sh` from the relevant `platforms/` folder instead of the default one.
 
 ## License
 
