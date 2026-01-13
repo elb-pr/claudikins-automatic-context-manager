@@ -147,6 +147,12 @@ if [ -z "$TRANSCRIPT_PATH" ] || [ ! -f "$TRANSCRIPT_PATH" ]; then
     exit 1
 fi
 
+# Cleanup function for progress dialog
+cleanup_progress() {
+    kill $PROGRESS_PID 2>/dev/null || true
+}
+trap cleanup_progress EXIT
+
 # Show progress indicator
 powershell.exe -Command "
 Add-Type -AssemblyName System.Windows.Forms
@@ -252,9 +258,8 @@ $GIT_CONTEXT
 EOF
 )
 
-# Close progress dialog
-kill $PROGRESS_PID 2>/dev/null || true
-pkill -f "CC-ACM.*progressForm" 2>/dev/null || true
+# Close progress dialog (trap handles cleanup on exit)
+cleanup_progress
 
 if [ -z "$HANDOFF" ]; then
     ERROR_DETAIL=""
@@ -301,4 +306,7 @@ EOF
 
 # Open new Warp tab with claude command using Warp launch configuration
 # SessionStart hook will automatically detect and invoke the handoff
-powershell.exe -Command "Start-Process 'warp://launch/cc-acm-handoff'" 2>/dev/null &
+if ! powershell.exe -Command "Start-Process 'warp://launch/cc-acm-handoff'" 2>/dev/null; then
+    echo "CC-ACM: Handoff saved to ~/.claude/skills/acm-handoff/SKILL.md" >&2
+    echo "CC-ACM: Start a new Claude session and use /acm:handoff to continue" >&2
+fi
