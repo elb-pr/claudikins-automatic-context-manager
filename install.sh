@@ -100,50 +100,15 @@ else
     echo -e "${GREEN}✓${RESET} Hook registered"
 fi
 
-# Check if statusline needs patching
+# Install cyberpunk statusline (includes CC-ACM trigger)
 if [ -f "$STATUSLINE" ]; then
-    if grep -q "handoff-prompt.sh" "$STATUSLINE"; then
-        echo -e "${GREEN}✓${RESET} Statusline already patched"
-    else
-        echo -e "${GRAY}→${RESET} Backing up statusline"
-        cp "$STATUSLINE" "$STATUSLINE.bak"
-
-        echo -e "${GRAY}→${RESET} Patching statusline for 60% context trigger"
-        # Add the handoff trigger after the 60% color setting
-        sed -i "/ctx_color='\\\\033\[31m'/a\\
-\\
-        # --- CC-ACM START ---\\
-        session_id=\$(echo \"\$input\" | grep -o '\"session_id\":\"[^\"]*\"' | sed 's/.*:\"//;s/\"//')\\
-        transcript=\$(echo \"\$input\" | grep -o '\"transcript_path\":\"[^\"]*\"' | sed 's/.*:\"//;s/\"//')\\
-        flag_file=\"/tmp/handoff-triggered-\${session_id}\"\\
-        snooze_file=\"/tmp/handoff-snooze-\${session_id}\"\\
-\\
-        should_trigger=false\\
-        if [ -n \"\$session_id\" ]; then\\
-            if [ -f \"\$snooze_file\" ]; then\\
-                snooze_until=\$(cat \"\$snooze_file\")\\
-                now=\$(date +%s)\\
-                if [ \"\$now\" -ge \"\$snooze_until\" ]; then\\
-                    rm -f \"\$snooze_file\"\\
-                    should_trigger=true\\
-                fi\\
-            elif [ ! -f \"\$flag_file\" ]; then\\
-                should_trigger=true\\
-            fi\\
-        fi\\
-\\
-        if [ \"\$should_trigger\" = true ]; then\\
-            touch \"\$flag_file\"\\
-            ~/.claude/scripts/handoff-prompt.sh \"\$transcript\" \"\$session_id\" \&\\
-        fi\\
-        # --- CC-ACM END ---" "$STATUSLINE"
-
-        echo -e "${GREEN}✓${RESET} Statusline patched"
-    fi
-else
-    echo -e "${PINK}⚠${RESET} No statusline found at $STATUSLINE"
-    echo -e "${GRAY}  You'll need to manually add the trigger to your statusline${RESET}"
+    echo -e "${GRAY}→${RESET} Backing up existing statusline"
+    cp "$STATUSLINE" "$STATUSLINE.bak"
 fi
+echo -e "${GRAY}→${RESET} Installing CC-ACM statusline"
+cp "$SCRIPT_DIR/scripts/statusline-command.sh" "$STATUSLINE"
+chmod +x "$STATUSLINE"
+echo -e "${GREEN}✓${RESET} Cyberpunk statusline installed"
 
 echo ""
 echo -e "${GREEN}${BOLD}✓ Installation complete!${RESET}"
