@@ -65,9 +65,13 @@ cp "$SCRIPT_DIR/.claude/hooks/session-start-acm.sh" "$HOOKS_DIR/"
 chmod +x "$HOOKS_DIR/session-start-acm.sh"
 echo -e "${GREEN}✓${RESET} SessionStart hook installed"
 
-# Install handoff skill
+# Install skills
 cp "$SCRIPT_DIR/skills/acm-handoff/SKILL.md" "$SKILLS_DIR/acm-handoff/"
 echo -e "${GREEN}✓${RESET} Handoff skill installed"
+
+mkdir -p "$SKILLS_DIR/acm-config"
+cp "$SCRIPT_DIR/skills/acm-config/SKILL.md" "$SKILLS_DIR/acm-config/"
+echo -e "${GREEN}✓${RESET} Config skill installed"
 
 # Install Warp launch configuration
 WARP_DIR="$HOME/.warp/launch_configurations"

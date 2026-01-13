@@ -39,7 +39,7 @@ echo ""
 # Confirm uninstall
 echo -e "${PINK}This will remove:${RESET}"
 echo -e "${GRAY}  • Handoff script from ~/.claude/scripts/${RESET}"
-echo -e "${GRAY}  • SessionStart hook and handoff skill${RESET}"
+echo -e "${GRAY}  • SessionStart hook and skills (handoff + config)${RESET}"
 echo -e "${GRAY}  • Warp launch configuration${RESET}"
 echo -e "${GRAY}  • Statusline patches${RESET}"
 echo -e "${GRAY}  • Configuration file${RESET}"
@@ -73,13 +73,21 @@ else
     echo -e "${GRAY}→${RESET} Hook not found"
 fi
 
-# Remove handoff skill
+# Remove skills
 if [ -d "$CLAUDE_DIR/skills/acm-handoff" ]; then
     echo -e "${GRAY}→${RESET} Removing handoff skill"
     rm -rf "$CLAUDE_DIR/skills/acm-handoff"
-    echo -e "${GREEN}✓${RESET} Skill removed"
+    echo -e "${GREEN}✓${RESET} Handoff skill removed"
 else
-    echo -e "${GRAY}→${RESET} Skill not found"
+    echo -e "${GRAY}→${RESET} Handoff skill not found"
+fi
+
+if [ -d "$CLAUDE_DIR/skills/acm-config" ]; then
+    echo -e "${GRAY}→${RESET} Removing config skill"
+    rm -rf "$CLAUDE_DIR/skills/acm-config"
+    echo -e "${GREEN}✓${RESET} Config skill removed"
+else
+    echo -e "${GRAY}→${RESET} Config skill not found"
 fi
 
 # Remove Warp launch configuration
