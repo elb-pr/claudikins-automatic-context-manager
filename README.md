@@ -1,4 +1,4 @@
-![CC-ACM Header](assets/header.jpg)
+![CC-ACM Header](assets/header.png)
 
 # CC-ACM (Claude Code Automatic Context Manager)
 
