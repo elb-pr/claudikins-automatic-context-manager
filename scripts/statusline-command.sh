@@ -109,7 +109,10 @@ if [ -n "$has_tokens" ]; then
 
         if [ "$should_trigger" = true ]; then
             touch "$flag_file"
-            ~/.claude/scripts/handoff-prompt.sh "$transcript" "$session_id" &
+            # Inject hookify rule instead of external popup
+            # Claude will ask user on next prompt
+            SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+            "$SCRIPT_DIR/inject-handoff-hook.sh" "$pct" 2>/dev/null &
         fi
         # --- Claudikins Automatic Context Manager END ---
     elif [ "$pct" -ge 40 ]; then

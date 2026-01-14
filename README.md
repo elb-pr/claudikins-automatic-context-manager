@@ -116,22 +116,39 @@ SUMMARY_TOKENS=500     # Max tokens for summary (200-2000)
 
 ## Technical Details
 
-**Dialog**: PowerShell WinForms, borderless with ASCII `░▒▓` borders. Retro palette.
-
-**Warp Launch**: Uses SendKeys - focuses Warp, Ctrl+Shift+T for new tab, clipboard paste "claude", Enter.
-
-**Hook**: Checks if `.claude/claudikins-acm/handoff.md` exists in the current project. If so, injects context telling Claude to immediately invoke `/acm:handoff`.
+**Handoff Trigger**: When context hits threshold, a hookify rule is injected into `.claude/hookify.handoff-request.local.md`. On your next message, Claude asks you via native `AskUserQuestion` dialog - no external popups needed.
 
 **Summary Generation**: Extracts recent conversation from transcript, includes git context if available, sends to `claude -p` for summarisation.
 
+**SessionStart Hook**: Checks if `.claude/claudikins-acm/handoff.md` exists in the current project. If so, injects context telling Claude to immediately invoke `/acm:handoff`.
+
 ## Platform Support
 
-Currently: WSL + Warp on Windows only.
+| Platform | Terminal | New Tab Method |
+|----------|----------|----------------|
+| Windows native | Windows Terminal | `wt.exe new-tab` (Git Bash or PowerShell) |
+| Windows native | Git Bash | New window via `start git-bash` |
+| Windows native | PowerShell | New window via `Start-Process` |
+| WSL | Windows Terminal | `wt.exe new-tab wsl` |
+| WSL | Warp | SendKeys* |
+| macOS | iTerm2 | osascript |
+| macOS | Terminal.app | osascript (Cmd+T) |
+| macOS | Warp | osascript |
+| Linux | GNOME Terminal | `--tab` flag |
+| Linux | Konsole | `--new-tab` flag |
+| Linux | XFCE Terminal | `--tab` flag |
+| Linux | Kitty | `@ launch --type=tab` |
+| Fallback | Any | Clipboard + instructions |
 
-The `platforms/` directory contains work-in-progress implementations for:
-- macOS (AppleScript dialogs)
-- Linux (Zenity dialogs)
-- Generic (terminal-based fallback)
+### *Warp on WSL (SendKeys)
+
+Warp doesn't expose a CLI for opening new tabs, so we use PowerShell SendKeys automation:
+1. Focus Warp window
+2. Send Ctrl+Shift+T (new tab)
+3. Paste command from clipboard
+4. Send Enter
+
+This is fragile but works reliably. If Warp adds proper CLI support in future, we'll update.
 
 ## Uninstall
 
